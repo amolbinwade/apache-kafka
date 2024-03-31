@@ -8,4 +8,5 @@
 > From the windows command prompt (as admin) run below command
 
 >> netsh interface portproxy add v4tov4 listenport=9092 listenaddress=0.0.0.0 connectport=9092 connectaddress=172.X.X.X
-172.X.X.X is the Ip of the WSL2
+
+> 172.X.X.X is the Ip of the WSL2
