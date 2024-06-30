@@ -10,3 +10,7 @@
 >> netsh interface portproxy add v4tov4 listenport=9092 listenaddress=0.0.0.0 connectport=9092 connectaddress=172.X.X.X
 
 > 172.X.X.X is the Ip of the WSL2
+
+
+## Spring Kafka Consumer framework classes
+![Alt text](diagrams/spring_kafka_cosumer_framework_diagram.png?raw=true "Spring Framework Classes for Kafka Consumer")
