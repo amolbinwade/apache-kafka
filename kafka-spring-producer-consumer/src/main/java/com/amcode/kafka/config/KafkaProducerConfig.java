@@ -18,7 +18,7 @@ import java.util.Map;
  * @author Amol Binwade
  */
 @Configuration
-public class KafkaConfig {
+public class KafkaProducerConfig {
 
     @Value("${kafka.bootstrap-server}")
     private String BOOTSTRAP_SERVER;
@@ -37,7 +37,7 @@ public class KafkaConfig {
             producerConfig.put(ProducerConfig.ACKS_CONFIG, "-1");
 
             //set BATCH_SIZE and LINGER_MS to increase producer throughput
-            //producerConfig.put(ProducerConfig.BATCH_SIZE_CONFIG, "16");
+            producerConfig.put(ProducerConfig.BATCH_SIZE_CONFIG, "16");
             producerConfig.put(ProducerConfig.LINGER_MS_CONFIG, "100");
 
             //UniformStickyPartitioner is deprecated from V 3.3. Instead set partitioner.ignore.keys=true
