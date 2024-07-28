@@ -28,6 +28,8 @@ public class KafkaConsumerConfig {
 
        configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServer);
        configs.put(ConsumerConfig.GROUP_ID_CONFIG, "MY_APP_CONSUMER_GROUP");
+       configs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+       //configs.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 30);
        return configs;
     }
 
@@ -41,7 +43,7 @@ public class KafkaConsumerConfig {
     public ConcurrentKafkaListenerContainerFactory<String, String> concurrentKafkaListenerContainerFactory(){
         ConcurrentKafkaListenerContainerFactory<String, String> factory =  new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
-        factory.setConcurrency(15);
+        factory.setConcurrency(10);
         return factory;
     }
 
