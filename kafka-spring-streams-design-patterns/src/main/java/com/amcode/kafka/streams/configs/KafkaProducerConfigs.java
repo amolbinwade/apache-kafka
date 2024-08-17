@@ -1,6 +1,7 @@
 package com.amcode.kafka.streams.configs;
 
 import com.amcode.kafka.streams.models.StockTicker;
+import com.amcode.kafka.streams.models.StockTickerRecord;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,12 +40,12 @@ public class KafkaProducerConfigs {
     }
 
     @Bean
-    public ProducerFactory<String, StockTicker> producerFactory(){
+    public ProducerFactory<String, StockTickerRecord> producerFactory(){
         return new DefaultKafkaProducerFactory<>(producerConfig());
     }
 
     @Bean
-    public KafkaTemplate<String, StockTicker> kafkaTemplate(){
+    public KafkaTemplate<String, StockTickerRecord> kafkaTemplate(){
         return new KafkaTemplate<>(producerFactory());
     }
 }

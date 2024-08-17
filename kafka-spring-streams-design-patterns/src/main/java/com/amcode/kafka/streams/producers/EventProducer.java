@@ -2,6 +2,7 @@ package com.amcode.kafka.streams.producers;
 
 import com.amcode.kafka.streams.models.StockTicker;
 
+import com.amcode.kafka.streams.models.StockTickerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import org.springframework.kafka.core.KafkaTemplate;
 
+import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -18,17 +20,17 @@ import java.util.concurrent.ExecutionException;
 public class EventProducer {
 
     @Autowired
-    KafkaTemplate<String, StockTicker> kafkaTemplate;
+    KafkaTemplate<String, StockTickerRecord> kafkaTemplate;
 
     Logger logger = LoggerFactory.getLogger(EventProducer.class.getName());
 
     @Value("${kafka.topic}")
     String topic;
 
-    public void sendEvent(StockTicker ticker)  {
-        logger.warn("Sending message to Kafka topic.");
-        CompletableFuture<SendResult<String, StockTicker>> future = kafkaTemplate
-                .send(topic, ticker.getStock(), ticker);
+    public void sendEvent(StockTickerRecord ticker)  {
+        logger.warn("Sending message to Kafka topic. {}", ticker.eventDate());
+        CompletableFuture<SendResult<String, StockTickerRecord>> future = kafkaTemplate
+                .send(topic, ticker.stock(), ticker);
 
         future.handle((r,e) -> {
             if(e==null){
