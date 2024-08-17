@@ -44,9 +44,12 @@ public class StockTickersPublisher {
 
     private Runnable getRunnable() {
         return new Runnable() {
+            boolean start = true;
             @Override
             public void run() {
-                produceStockTickers();
+                if(start)
+                    produceStockTickers();
+                start = true;
             }
         };
     }

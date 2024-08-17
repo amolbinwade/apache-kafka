@@ -1,7 +1,5 @@
 package com.amcode.kafka.streams.producers;
 
-import com.amcode.kafka.streams.models.StockTicker;
-
 import com.amcode.kafka.streams.models.StockTickerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +10,9 @@ import org.springframework.stereotype.Component;
 
 import org.springframework.kafka.core.KafkaTemplate;
 
-import java.util.Date;
+
+import java.time.ZonedDateTime;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 @Component
 public class EventProducer {
@@ -31,6 +29,8 @@ public class EventProducer {
         logger.warn("Sending message to Kafka topic. {}", ticker.eventDate());
         CompletableFuture<SendResult<String, StockTickerRecord>> future = kafkaTemplate
                 .send(topic, ticker.stock(), ticker);
+        logger.warn("Producing message: {}", ticker);
+
 
         future.handle((r,e) -> {
             if(e==null){
@@ -43,5 +43,15 @@ public class EventProducer {
         }).thenRun(()->{
             logger.warn("Send operation completed");
         });
+    }
+
+    public static void main(String[] args) {
+        ZonedDateTime dt = ZonedDateTime.now();
+        System.out.println("dt: "+dt);
+        String dts = dt.toString();
+        System.out.println("dt String: "+ dts);
+        ZonedDateTime dt1 = ZonedDateTime.parse(dts);
+        System.out.println("dt1 :"+dt1);
+
     }
 }

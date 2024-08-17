@@ -2,6 +2,7 @@ package com.amcode.kafka.streams.util;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.amcode.kafka.streams.models.*;
@@ -16,9 +17,18 @@ public class StockTickersGenerator {
     private static final StocksEnum[] stocks = StocksEnum.values();
     private static final Map<StocksEnum, Float> currentStocksPriceMap = new HashMap<>();
 
+    static{
+        AtomicInteger i = new AtomicInteger(1);
+        Arrays.stream(StocksEnum.values()).sorted().forEach(
+                (s) -> {
+                    currentStocksPriceMap.put(s, 100f*i.incrementAndGet());
+                }
+        );
+    }
+
     /***
      * This method generate stock tickers with random controlled price movement.
-     * @return List<StockTicker>
+     * @return List<StockTickerRecord>
      */
     public static List<StockTickerRecord> generateStockTickers(){
         return Arrays.stream(StocksEnum.values())
@@ -34,7 +44,7 @@ public class StockTickersGenerator {
     public static StockTickerRecord generateStockTickerRecord(StocksEnum ticker){
         float price = 0;
         changeStockPrice(ticker);
-        return new StockTickerRecord(ZonedDateTime.now(),ticker.code, currentStocksPriceMap.get(ticker));
+        return new StockTickerRecord(ZonedDateTime.now().toString(),ticker.code, currentStocksPriceMap.get(ticker));
     }
 
     private static void changeStockPrice(StocksEnum randomStock) {

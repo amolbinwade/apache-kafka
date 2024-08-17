@@ -1,6 +1,5 @@
 package com.amcode.kafka.streams.configs;
 
-import com.amcode.kafka.streams.models.StockTicker;
 import com.amcode.kafka.streams.models.StockTickerRecord;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -12,7 +11,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
-import javax.swing.text.ParagraphView;
 import java.util.HashMap;
 import java.util.Map;
 
