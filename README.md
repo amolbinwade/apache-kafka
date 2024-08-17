@@ -14,3 +14,7 @@
 
 ## Spring Kafka Consumer framework classes
 ![Alt text](diagrams/spring_kafka_cosumer_framework_diagram.png?raw=true "Spring Framework Classes for Kafka Consumer")
+
+## Kafka Streams API
+### Kafka Streams Design Patterns
+1. [Single Event Processing](https://github.com/amolbinwade/apache-kafka/blob/main/kafka-spring-streams-design-patterns/src/main/java/com/amcode/kafka/streams/patterns/SingleEventProcessing.java)
