@@ -34,7 +34,7 @@ public class StockTickersPublisher {
                 return;
             Runnable runnable = getRunnable();
             ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-            executorService.scheduleAtFixedRate(getRunnable(), 2, 2, TimeUnit.SECONDS);
+            executorService.scheduleAtFixedRate(getRunnable(), 0, 1, TimeUnit.SECONDS);
             isRunning.set(true);
 
         }catch(Exception e){
