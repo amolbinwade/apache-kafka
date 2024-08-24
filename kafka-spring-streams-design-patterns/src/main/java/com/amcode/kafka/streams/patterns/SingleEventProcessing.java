@@ -2,6 +2,7 @@ package com.amcode.kafka.streams.patterns;
 
 import com.amcode.kafka.streams.models.StockTickerRecord;
 import com.amcode.kafka.streams.serdes.StockTickerRecordSerde;
+import lombok.Setter;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
@@ -37,6 +38,7 @@ import java.util.Map;
 @Configuration
 @EnableKafka
 //@EnableKafkaStreams
+@Setter
 public class SingleEventProcessing {
 
     @Value("${kafka.topic}")
@@ -65,12 +67,17 @@ public class SingleEventProcessing {
 
     @Bean(name = "SingleEventProcessingStreamsBuilder")
     public FactoryBean<StreamsBuilder> myKStreamBuilder() {
+        Map<String, Object> configs = getConfigs();
+        return new StreamsBuilderFactoryBean(new KafkaStreamsConfiguration(configs));
+    }
+
+    public Map<String, Object> getConfigs() {
         Map<String, Object> configs = new HashMap<>();
         configs.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVER);
         configs.put(StreamsConfig.APPLICATION_ID_CONFIG, "amcode_streams_single_event_processing");
         configs.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         configs.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, StockTickerRecordSerde.class.getName());
-        return new StreamsBuilderFactoryBean(new KafkaStreamsConfiguration(configs));
+        return configs;
     }
 
     @Bean

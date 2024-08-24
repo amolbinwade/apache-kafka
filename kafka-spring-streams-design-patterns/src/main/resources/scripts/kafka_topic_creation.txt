@@ -1,3 +1,4 @@
 #create topic for Stock Tickers
 kafka-topics.sh --bootstrap-server localhost:9092 --topic amcode-stocktickers --create --partitions 3 --replication-factor 1
 kafka-topics.sh --bootstrap-server localhost:9092 --topic amcode-stocktickers-itc --create --partitions 1 --replication-factor 1
+kafka-topics.sh --bootstrap-server localhost:9092 --topic amcode-stocktickers-stats --create --partitions 3 --replication-factor 1
