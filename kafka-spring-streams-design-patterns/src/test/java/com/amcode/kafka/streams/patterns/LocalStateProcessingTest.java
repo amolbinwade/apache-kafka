@@ -27,6 +27,7 @@ public class LocalStateProcessingTest {
         localStateProcessing.setKAFKA_TOPIC("input_topic");
         localStateProcessing.setLOCAL_STATE_STATS_KAFKA_TOPIC("output_topic");
         props.putAll(localStateProcessing.getConfigs());
+        props.put(StreamsConfig.InternalConfig.EMIT_INTERVAL_MS_KSTREAMS_WINDOWED_AGGREGATION,"0");
         eventDate = "01-Sep-2024 11:11:11";
     }
 
@@ -44,7 +45,7 @@ public class LocalStateProcessingTest {
                     .createOutputTopic("output_topic", new StringDeserializer(),
                             new JsonDeserializer<StockStats>(StockStats.class));
             populateInputTopic(inputTopic);
-            List list = outputTopic.readKeyValuesToList();
+            List<KeyValue<String, StockStats>> list = outputTopic.readKeyValuesToList();
             list.forEach(System.out::println);
 
         }
@@ -58,43 +59,43 @@ public class LocalStateProcessingTest {
         Instant instant = localDateTime.toInstant(ZoneOffset.UTC);
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord(eventDate, "ITC", 101.11f),
+                new StockTickerRecord("01-Sep-2024 11:11:00", "ITC", 101.11f),
                 instant);
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord(eventDate, "ITC", 102.11f),
+                new StockTickerRecord("01-Sep-2024 11:11:01", "ITC", 102.11f),
                 instant.plusSeconds(1));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord(eventDate, "ITC", 103.11f),
+                new StockTickerRecord("01-Sep-2024 11:11:02", "ITC", 103.11f),
                 instant.plusSeconds(2));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord(eventDate, "ITC", 100.11f),
+                new StockTickerRecord("01-Sep-2024 11:11:03", "ITC", 100.11f),
                 instant.plusSeconds(3));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord(eventDate, "ITC", 107.11f),
+                new StockTickerRecord("01-Sep-2024 11:11:04", "ITC", 107.11f),
                 instant.plusSeconds(4));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord(eventDate, "ITC", 99.11f),
+                new StockTickerRecord("01-Sep-2024 11:11:05", "ITC", 99.11f),
                 instant.plusSeconds(5));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord(eventDate, "ITC", 98.11f),
+                new StockTickerRecord("01-Sep-2024 11:11:06", "ITC", 98.11f),
                 instant.plusSeconds(6));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord(eventDate, "ITC", 97.11f),
+                new StockTickerRecord("01-Sep-2024 11:11:07", "ITC", 97.11f),
                 instant.plusSeconds(7));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord(eventDate, "ITC", 88.11f),
+                new StockTickerRecord("01-Sep-2024 11:11:08", "ITC", 88.11f),
                 instant.plusSeconds(8));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord(eventDate, "ITC", 99.21f),
+                new StockTickerRecord("01-Sep-2024 11:11:09", "ITC", 99.21f),
                 instant.plusSeconds(9));
     }
 

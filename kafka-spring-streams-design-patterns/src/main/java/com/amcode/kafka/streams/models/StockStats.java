@@ -28,4 +28,12 @@ public class StockStats {
         this.latestEventDate = record.eventDate();
         return this;
     }
+
+    public String toString(){
+        return "SotckStats : "
+                +this.stock
+                +"  maxPrice: "+this.maxPrice
+                +"  minPrice: "+this.minPrice
+                +"  latestEventDate: "+this.latestEventDate;
+    }
 }

@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
+import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.*;
@@ -47,7 +48,7 @@ public class LocalStateProcessing {
     @Value("${kafka.bootstrap-server}")
     private String BOOTSTRAP_SERVER;
 
-    private static final long WINDOW_SIZE = 5000;
+    private static final long WINDOW_SIZE = 10000;
 
     @Bean(name = "LocalStateProcessingStreamsBuilder")
     public FactoryBean<StreamsBuilder> myKStreamBuilder() {
@@ -74,13 +75,20 @@ public class LocalStateProcessing {
         KStream<Windowed<String>, StockStats> statsStream = source.groupByKey()
                 .windowedBy(TimeWindows
                         .ofSizeWithNoGrace(Duration.ofMillis(WINDOW_SIZE))
-                        .advanceBy(Duration.ofMillis(WINDOW_SIZE)))
+                        //.advanceBy(Duration.ofMillis(WINDOW_SIZE))
+                )
                 .<StockStats>aggregate(
                         () -> new StockStats(),
                         (k, v, stockStats) -> stockStats.add(v),
                         Materialized.<String, StockStats, WindowStore<Bytes, byte[]>>as("local_state_processing")
                                 .withValueSerde(new StockStatsSerde()))
-                .toStream();
+                //.suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded()))
+                .toStream()
+                //.map((wk, value) -> KeyValue.pair(wk.key(), value))
+                .peek((key, value) -> System.out.println(
+                        "#########################"+
+                        "Here : "
+                +key+" :: "+value));
         statsStream.to(LOCAL_STATE_STATS_KAFKA_TOPIC, Produced.keySerde(
                 WindowedSerdes.timeWindowedSerdeFrom(String.class, WINDOW_SIZE)));
 
