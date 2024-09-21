@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,7 +18,7 @@ public class StockStats {
     private float currentPrice;
     private float maxPrice;
     private float minPrice;
-    private String latestEventDate;
+    private long latestEventDate;
 
     public StockStats add(StockTickerRecord record){
         logger.warn("## StockTickerRecord : {}", record);
@@ -26,6 +28,7 @@ public class StockStats {
         this.minPrice = this.minPrice==0?record.stockPrice():this.minPrice;
         this.minPrice = Math.min(this.minPrice, record.stockPrice());
         this.latestEventDate = record.eventDate();
+        logger.warn("## StockStats : {}", this);
         return this;
     }
 
@@ -34,6 +37,6 @@ public class StockStats {
                 +this.stock
                 +"  maxPrice: "+this.maxPrice
                 +"  minPrice: "+this.minPrice
-                +"  latestEventDate: "+this.latestEventDate;
+                +"  latestEventDate: "+new Date(latestEventDate);
     }
 }

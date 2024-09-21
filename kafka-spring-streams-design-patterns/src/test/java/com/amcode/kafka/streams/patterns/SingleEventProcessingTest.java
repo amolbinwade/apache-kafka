@@ -18,7 +18,7 @@ public class SingleEventProcessingTest {
 
     private SingleEventProcessing singleEventProcessing;
     private Properties props = new Properties();
-    private String eventDate, getEventDate2;
+    private long eventDate, getEventDate2;
 
     @BeforeEach
     void setup(){
@@ -42,11 +42,11 @@ public class SingleEventProcessingTest {
             TestOutputTopic<String, StockTickerRecord> outputTopic = topologyTestDriver
                     .createOutputTopic("output_topic", new StringDeserializer(), new JsonDeserializer<StockTickerRecord>(StockTickerRecord.class));
 
-            eventDate = ZonedDateTime.now().toString();
+            eventDate = ZonedDateTime.now().toInstant().toEpochMilli();
             inputTopic.pipeInput("ITC", new StockTickerRecord(eventDate, "ITC", 101.11f));
             inputTopic.pipeInput("REL", new StockTickerRecord(eventDate, "ITC", 101.11f));
 
-            getEventDate2 = ZonedDateTime.now().toString();
+            getEventDate2 = ZonedDateTime.now().toInstant().toEpochMilli();
             inputTopic.pipeInput("REL", new StockTickerRecord(getEventDate2, "ITC", 101.11f));
             inputTopic.pipeInput("ITC", new StockTickerRecord(getEventDate2, "ITC", 110.11f));
             inputTopic.pipeInput("SEZ", new StockTickerRecord(getEventDate2, "ITC", 101.11f));

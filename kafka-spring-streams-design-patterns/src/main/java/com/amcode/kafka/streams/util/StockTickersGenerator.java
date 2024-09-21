@@ -44,7 +44,7 @@ public class StockTickersGenerator {
     public static StockTickerRecord generateStockTickerRecord(StocksEnum ticker){
         float price = 0;
         changeStockPrice(ticker);
-        return new StockTickerRecord(ZonedDateTime.now().toString(),ticker.code, currentStocksPriceMap.get(ticker));
+        return new StockTickerRecord(System.currentTimeMillis(),ticker.code, currentStocksPriceMap.get(ticker));
     }
 
     private static void changeStockPrice(StocksEnum randomStock) {

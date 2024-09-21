@@ -45,9 +45,13 @@ public class LocalStateProcessingTest {
                     .createOutputTopic("output_topic", new StringDeserializer(),
                             new JsonDeserializer<StockStats>(StockStats.class));
             populateInputTopic(inputTopic);
+            Thread.sleep(50000);
             List<KeyValue<String, StockStats>> list = outputTopic.readKeyValuesToList();
+            System.out.println("Output list size: "+list.size());
             list.forEach(System.out::println);
 
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -59,44 +63,56 @@ public class LocalStateProcessingTest {
         Instant instant = localDateTime.toInstant(ZoneOffset.UTC);
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord("01-Sep-2024 11:11:00", "ITC", 101.11f),
+                new StockTickerRecord(instant.toEpochMilli(), "ITC", 101.11f),
                 instant);
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord("01-Sep-2024 11:11:01", "ITC", 102.11f),
+                new StockTickerRecord(instant.plusSeconds(1).toEpochMilli(), "ITC", 102.11f),
                 instant.plusSeconds(1));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord("01-Sep-2024 11:11:02", "ITC", 103.11f),
+                new StockTickerRecord(instant.plusSeconds(2).toEpochMilli(), "ITC", 103.11f),
                 instant.plusSeconds(2));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord("01-Sep-2024 11:11:03", "ITC", 100.11f),
+                new StockTickerRecord(instant.plusSeconds(3).toEpochMilli(), "ITC", 100.11f),
                 instant.plusSeconds(3));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord("01-Sep-2024 11:11:04", "ITC", 107.11f),
+                new StockTickerRecord(instant.plusSeconds(4).toEpochMilli(), "ITC", 107.11f),
                 instant.plusSeconds(4));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord("01-Sep-2024 11:11:05", "ITC", 99.11f),
+                new StockTickerRecord(instant.plusSeconds(5).toEpochMilli(), "ITC", 99.11f),
                 instant.plusSeconds(5));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord("01-Sep-2024 11:11:06", "ITC", 98.11f),
+                new StockTickerRecord(instant.plusSeconds(6).toEpochMilli(), "ITC", 98.11f),
                 instant.plusSeconds(6));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord("01-Sep-2024 11:11:07", "ITC", 97.11f),
+                new StockTickerRecord(instant.plusSeconds(7).toEpochMilli(), "ITC", 97.11f),
                 instant.plusSeconds(7));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord("01-Sep-2024 11:11:08", "ITC", 88.11f),
+                new StockTickerRecord(instant.plusSeconds(8).toEpochMilli(), "ITC", 88.11f),
                 instant.plusSeconds(8));
 
         inputTopic.pipeInput("ITC",
-                new StockTickerRecord("01-Sep-2024 11:11:09", "ITC", 99.21f),
+                new StockTickerRecord(instant.plusSeconds(9).toEpochMilli(), "ITC", 99.21f),
                 instant.plusSeconds(9));
+
+        inputTopic.pipeInput("ITC",
+                new StockTickerRecord(instant.plusSeconds(10).toEpochMilli(), "ITC", 86.11f),
+                instant.plusSeconds(10));
+
+        inputTopic.pipeInput("ITC",
+                new StockTickerRecord(instant.plusSeconds(11).toEpochMilli(), "ITC", 84.11f),
+                instant.plusSeconds(11));
+
+        inputTopic.pipeInput("ITC",
+                new StockTickerRecord(instant.plusSeconds(12).toEpochMilli(), "ITC", 85.21f),
+                instant.plusSeconds(12));
     }
 
 

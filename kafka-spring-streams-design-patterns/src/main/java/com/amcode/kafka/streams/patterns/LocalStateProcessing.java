@@ -6,12 +6,14 @@ import com.amcode.kafka.streams.serdes.StockStatsSerde;
 import com.amcode.kafka.streams.serdes.StockTickerRecordSerde;
 import lombok.Setter;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.processor.TimestampExtractor;
 import org.apache.kafka.streams.state.WindowStore;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -48,7 +50,7 @@ public class LocalStateProcessing {
     @Value("${kafka.bootstrap-server}")
     private String BOOTSTRAP_SERVER;
 
-    private static final long WINDOW_SIZE = 10000;
+    private static final long WINDOW_SIZE = 5000;
 
     @Bean(name = "LocalStateProcessingStreamsBuilder")
     public FactoryBean<StreamsBuilder> myKStreamBuilder() {
@@ -69,29 +71,42 @@ public class LocalStateProcessing {
     }
 
     @Bean(name = "LocalStateProcessingKStream")
-    public KStream<Windowed<String>, StockStats> localStateProcessingKStream(
+    public KStream<String, StockStats> localStateProcessingKStream(
             @Qualifier("LocalStateProcessingStreamsBuilder") StreamsBuilder builder) {
-        KStream<String, StockTickerRecord> source = builder.stream(KAFKA_TOPIC);
-        KStream<Windowed<String>, StockStats> statsStream = source.groupByKey()
+        KStream<String, StockTickerRecord> source = builder.stream(KAFKA_TOPIC,
+                Consumed.with(Serdes.String(), new StockTickerRecordSerde())
+                        .withTimestampExtractor(new StockTickerTimestampExtractor()));
+        KStream<String, StockStats> statsStream = source.groupByKey()
                 .windowedBy(TimeWindows
-                        .ofSizeWithNoGrace(Duration.ofMillis(WINDOW_SIZE))
+                        .ofSizeAndGrace(Duration.ofMillis(WINDOW_SIZE),
+                                Duration.ofMillis(0))
                         //.advanceBy(Duration.ofMillis(WINDOW_SIZE))
                 )
                 .<StockStats>aggregate(
                         () -> new StockStats(),
                         (k, v, stockStats) -> stockStats.add(v),
-                        Materialized.<String, StockStats, WindowStore<Bytes, byte[]>>as("local_state_processing")
-                                .withValueSerde(new StockStatsSerde()))
-                //.suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded()))
+                       // Materialized.<String, StockStats, WindowStore<Bytes, byte[]>>as("local_state_processing1")
+                         //       .withValueSerde(new StockStatsSerde()))
+                        Materialized.with(Serdes.String(), new StockStatsSerde()))
+                .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded()))
                 .toStream()
-                //.map((wk, value) -> KeyValue.pair(wk.key(), value))
+                .map((wk, value) -> KeyValue.pair(wk.key(), value))
                 .peek((key, value) -> System.out.println(
                         "#########################"+
                         "Here : "
                 +key+" :: "+value));
-        statsStream.to(LOCAL_STATE_STATS_KAFKA_TOPIC, Produced.keySerde(
-                WindowedSerdes.timeWindowedSerdeFrom(String.class, WINDOW_SIZE)));
+        statsStream.to(LOCAL_STATE_STATS_KAFKA_TOPIC,
+                Produced.with(Serdes.String(), new StockStatsSerde()));
 
         return statsStream;
+    }
+
+    static class StockTickerTimestampExtractor implements TimestampExtractor {
+
+        @Override
+        public long extract(ConsumerRecord<Object, Object> consumerRecord, long l) {
+            StockTickerRecord stockTickerRecord = (StockTickerRecord) consumerRecord.value();
+            return stockTickerRecord.eventDate();
+        }
     }
 }
