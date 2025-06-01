@@ -5,7 +5,7 @@
    * B. code for [Concurrency and Performance Test with different number of Topic partitions](https://www.linkedin.com/pulse/kafka01-concurrency-performance-test-different-number-amol-binwade-3jfnf/?trackingId=EYkTXCZET16bfO8N9bGS5A%3D%3D)
 3. [kafka-spring-streams-design-patterns](https://github.com/amolbinwade/apache-kafka/tree/main/kafka-spring-streams-design-patterns)
    
-   #### This module contains Apache kafka Streams API design patterns implmentations.
+   #### This module contains Apache kafka Streams API design patterns implmentation.
 
 ## Setup Notes:
 1. If Kafka is setup using WSL on Windows, then Producer from java application will not directly connect if bootstrap-server is configured as localhost:9092. Follow below steps:
